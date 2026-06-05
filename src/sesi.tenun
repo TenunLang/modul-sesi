@@ -1,0 +1,65 @@
+// Modul Sesi untuk Tenun — penyimpanan sesi server + bantu cookie.
+// Dibangun di atas builtin: simpan/muat/hapus (kv persisten), acak, base64, cookie.
+
+// ID sesi acak 24 byte -> base64url (aman dipakai di cookie/URL).
+fungsi sesi_id_baru(): teks {
+    biar b: teks = base64(acak(24));
+    b = ganti(b, "+", "-");
+    b = ganti(b, "/", "_");
+    b = ganti(b, "=", "");
+    kembali b;
+}
+
+// Kunci penyimpanan untuk sebuah sesi (beri awalan agar tidak bentrok).
+fungsi sesi_kunci(id: teks): teks {
+    kembali "sesi:" + id;
+}
+
+// Buat sesi baru berisi data (JSON teks). Kembalikan ID sesi.
+fungsi sesi_buat(data: teks): teks {
+    biar id: teks = sesi_id_baru();
+    simpan(sesi_kunci(id), data);
+    kembali id;
+}
+
+// Ambil data sesi (JSON teks). "" bila tidak ada.
+fungsi sesi_ambil(id: teks): teks {
+    kembali muat(sesi_kunci(id));
+}
+
+// True bila sesi ada.
+fungsi sesi_ada(id: teks): bool {
+    kembali panjangTeks(muat(sesi_kunci(id))) > 0;
+}
+
+// Perbarui data sesi yang sudah ada (atau buat bila id valid).
+fungsi sesi_simpan(id: teks, data: teks): kosong {
+    simpan(sesi_kunci(id), data);
+}
+
+// Hapus sesi (logout).
+fungsi sesi_hapus(id: teks): kosong {
+    hapus(sesi_kunci(id));
+}
+
+// Nilai field JSON dari data sesi (bungkus jsonTeks).
+fungsi sesi_field(id: teks, kunci: teks): teks {
+    kembali jsonTeks(muat(sesi_kunci(id)), kunci);
+}
+
+// ---- Bantu cookie ----
+
+// Header Set-Cookie untuk menanam ID sesi (aman: HttpOnly, SameSite=Lax).
+fungsi sesi_set_cookie(id: teks): teks {
+    kembali "sesi=" + id + "; HttpOnly; Path=/; SameSite=Lax";
+}
+
+// Set-Cookie untuk menghapus cookie sesi di browser.
+fungsi sesi_hapus_cookie(): teks {
+    kembali "sesi=; HttpOnly; Path=/; Max-Age=0; SameSite=Lax";
+}
+
+// Baca ID sesi dari cookie permintaan masuk ("" bila tidak ada).
+fungsi sesi_dari_cookie(): teks {
+    kembali cookie("sesi");
+}

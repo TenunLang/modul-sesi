@@ -1,0 +1,15 @@
+impor "sesi";
+
+// Saat login berhasil: buat sesi, kirim cookie.
+biar id: teks = sesi_buat("{\"pengguna\":\"taqin\",\"peran\":\"admin\"}");
+cetak("id sesi: " + id);
+headerKan("Set-Cookie", sesi_set_cookie(id));
+
+// Pada permintaan berikutnya: baca id dari cookie, ambil data.
+cetak(sesi_ada(id));                  // benar
+cetak(sesi_field(id, "pengguna"));    // taqin
+cetak(sesi_field(id, "peran"));       // admin
+
+// Logout.
+sesi_hapus(id);
+cetak(sesi_ada(id));                  // salah

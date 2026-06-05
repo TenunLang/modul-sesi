@@ -1,0 +1,10 @@
+{
+  "nama": "sesi",
+  "versi": "0.1.0",
+  "deskripsi": "Manajemen sesi server + bantu cookie untuk Tenun.",
+  "lisensi": "MIT",
+  "penulis": "TenunLang",
+  "berkas": "src/sesi.tenun",
+  "kataKunci": ["sesi", "session", "cookie", "web"],
+  "butuh": {}
+}
