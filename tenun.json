@@ -1,7 +1,7 @@
 {
   "nama": "sesi",
-  "versi": "0.1.0",
-  "deskripsi": "Manajemen sesi server + bantu cookie untuk Tenun.",
+  "versi": "0.2.0",
+  "deskripsi": "Manajemen sesi server untuk Tenun: cookie aman, regenerasi ID, flash, sesi_mulai.",
   "lisensi": "MIT",
   "penulis": "TenunLang",
   "berkas": "src/sesi.tenun",

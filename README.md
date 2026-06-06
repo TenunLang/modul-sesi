@@ -40,6 +40,22 @@ headerKan("Set-Cookie", sesi_hapus_cookie());
 - `sesi_hapus_cookie(): teks` — Set-Cookie penghapus (Max-Age=0).
 - `sesi_dari_cookie(): teks` — baca ID sesi dari cookie permintaan masuk.
 
+### Lanjutan
+
+```tenun
+biar id: teks = sesi_mulai();                 // ambil dari cookie / buat baru
+// setelah login berhasil:
+id = sesi_regenerasi(id);                      // cegah session fixation
+headerKan("Set-Cookie", sesi_set_cookie_opsi(id, 86400, benar));  // 1 hari, Secure
+sesi_flash_set(id, "Selamat datang!");        // pesan sekali-pakai
+cetak(sesi_flash_ambil(id));
+```
+
+- `sesi_mulai(): teks` — ID dari cookie atau sesi kosong baru.
+- `sesi_regenerasi(idLama): teks` — ganti ID (cegah session fixation; setelah login).
+- `sesi_set_cookie_opsi(id, maxAgeDetik, secure): teks` — Set-Cookie + Max-Age + Secure.
+- `sesi_flash_set(id, pesan)` / `sesi_flash_ambil(id)` — pesan flash sekali-pakai.
+
 ## Keamanan
 
 - ID sesi 24 byte acak (base64url), aman dipakai di cookie/URL.

@@ -63,3 +63,51 @@ fungsi sesi_hapus_cookie(): teks {
 fungsi sesi_dari_cookie(): teks {
     kembali cookie("sesi");
 }
+
+// Set-Cookie dengan opsi: umur (detik) & Secure (HTTPS-only).
+// maxAgeDetik <= 0 -> cookie sesi (hilang saat browser ditutup).
+fungsi sesi_set_cookie_opsi(id: teks, maxAgeDetik: bulat, secure: bool): teks {
+    biar c: teks = "sesi=" + id + "; HttpOnly; Path=/; SameSite=Lax";
+    kalau maxAgeDetik > 0 {
+        c = c + "; Max-Age=" + keTeks(maxAgeDetik);
+    }
+    kalau secure {
+        c = c + "; Secure";
+    }
+    kembali c;
+}
+
+// ---- Keamanan & utilitas sesi ----
+
+// Regenerasi ID sesi (cegah session fixation; panggil setelah login berhasil).
+// Pindahkan data ke ID baru, hapus ID lama. Kembalikan ID baru.
+fungsi sesi_regenerasi(idLama: teks): teks {
+    biar data: teks = muat(sesi_kunci(idLama));
+    biar idBaru: teks = sesi_id_baru();
+    simpan(sesi_kunci(idBaru), data);
+    hapus(sesi_kunci(idLama));
+    kembali idBaru;
+}
+
+// Ambil ID sesi dari cookie; bila belum ada, buat sesi kosong baru.
+// Kembalikan ID yang valid (pemanggil menanam cookie bila perlu).
+fungsi sesi_mulai(): teks {
+    biar id: teks = cookie("sesi");
+    kalau panjangTeks(id) > 0 {
+        kalau sesi_ada(id) {
+            kembali id;
+        }
+    }
+    kembali sesi_buat("{}");
+}
+
+// Pesan flash sekali-pakai: simpan lalu hapus saat dibaca.
+fungsi sesi_flash_set(id: teks, pesan: teks): kosong {
+    simpan("flash:" + id, pesan);
+}
+
+fungsi sesi_flash_ambil(id: teks): teks {
+    biar p: teks = muat("flash:" + id);
+    hapus("flash:" + id);
+    kembali p;
+}
