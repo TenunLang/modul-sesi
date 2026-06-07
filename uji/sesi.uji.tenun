@@ -1,0 +1,4 @@
+impor "../src/sesi.tenun";
+tegasSama(sesi_kunci("abc"), "sesi:abc", "kunci penyimpanan");
+tegas(panjangTeks(sesi_id_baru()) > 0, "id baru tak kosong");
+tegas(cari(sesi_id_baru(), "/") < 0, "id aman url");
